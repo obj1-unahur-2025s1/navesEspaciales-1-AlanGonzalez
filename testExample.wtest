@@ -1,9 +1,79 @@
-import example.pepita
+import nvaes.*
 
 describe "group of tests for pepita" {
 
-  test "pepita has initial energy" {
-    assert.equals(100, pepita.energy())
+  const naveBaliza = new NaveBaliza(velocidad = 0, direccionRespectoSol = 0, cantidadPasajeros = 50, combustible = 0, colorBaliza = "Blanco")
+
+  const navePasajero = new NavePasajeros(velocidad = 0, direccionRespectoSol = 0, cantidadPasajeros = 70, combustible = 0)
+
+  const naveCombate = new NaveCombate(velocidad = 0, direccionRespectoSol = 0, cantidadPasajeros = 100, combustible = 0)
+  
+  const naveHospital = new NaveHospital(velocidad = 0, direccionRespectoSol = 0, cantidadPasajeros = 70, combustible = 0, quirofanoPreparado = false)
+
+  const naveSigilosa = new NaveCombateSigiloso(velocidad = 0, direccionRespectoSol = 0, cantidadPasajeros = 100, combustible = 0)
+
+  test "la nave baliza prepara su viaje y tiene combustible 30k, velocidad 5k y su baliza es verde y se poner paralelo al sol" {
+    naveBaliza.prepararViaje()
+
+    assert.equals("verde", naveBaliza.colorBaliza())
+    assert.equals(0, naveBaliza.direccionRespectoSol())
+    assert.equals(30000, naveBaliza.combustible())
+    assert.equals(5000, naveBaliza.velocidad())
+  }
+
+  test "nave de pasajero prepara su viaje, tiene combustible 30k, velocidad 5k y carga comida y bebida, se acerca un poco al sol" {
+    navePasajero.prepararViaje()
+    assert.equals(30000, navePasajero.combustible())
+    assert.equals(5000, navePasajero.velocidad())
+    assert.equals(1, navePasajero.direccionRespectoSol())
+    assert.equals(navePasajero.comida(), navePasajero.comida())
+    assert.equals(navePasajero.bebida(), navePasajero.bebida())
+  }
+
+  test "nave de combate tiene velocidad 20k, combustible 30k, replega misiles, emite un mensaje" {
+    naveCombate.prepararViaje()
+    assert.equals(30000, naveCombate.combustible())
+    assert.equals(20000, naveCombate.velocidad())
+    assert.notThat(naveCombate.misilesDesplegados())
+    assert.that(naveCombate.mensajes().contains("Saliendo en mision"))
+  }
+
+  test "nave baliza no esta tranquilo" {
+    assert.notThat(naveBaliza.tranquilo())
+  }
+
+  test "la nave pasajero esta tranquilo" {
+    assert.notThat(navePasajero.tranquilo())
+  }
+
+  test "la nave combate esta tranquilo" {
+    assert.notThat(naveCombate.tranquilo())
+  }
+
+  test "la vane hospital esta tranquilo" {
+    naveHospital.prepararViaje()
+    assert.that(naveHospital.tranquilo())
+  }
+
+  test "nave Sigilosa esta tranquilo" {
+    naveSigilosa.prepararViaje()
+    assert.that(naveSigilosa.tranquilo())
+  }
+
+  test "nave baliza recibe amenaza" {
+    naveBaliza.recibirAmenaza()
+    assert.equals("rojo", naveBaliza.colorBaliza())
+  }
+
+  test "nave pasajero recibe amenaza" {
+    navePasajero.prepararViaje()
+    navePasajero.recibirAmenaza()
+    assert.equals(navePasajero.bebida(), navePasajero.bebida())
+  }
+
+  test "nave de combate recibe amenaza" {
+    naveCombate.recibirAmenaza()
+    assert.that(naveCombate.emitioMensaje("Amenaza Recibida"))
   }
 
 }
